@@ -12,6 +12,7 @@ import connectRedis from "connect-redis";
 import { createConnection } from "typeorm";
 import { User } from "./entities/User";
 import { Post } from "./entities/Post";
+import path from "path";
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
@@ -20,9 +21,11 @@ const main = async () => {
     password: "!@Arch!@34",
     logging: true,
     synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User],
   });
-
+  conn.runMigrations();
+  // await Post.delete({});
   const app = express();
   const RedisStore = connectRedis(session);
   const redisClient = new Redis();
